@@ -20,21 +20,28 @@ jobs:
           sudo apt-get install -y build-essential libssl-dev libffi-dev python3-dev git zip unzip
           pip install --upgrade pip
           pip install buildozer cython
-      - name: Configure Buildozer and Force Stable Tools
+      - name: Create Clean Buildozer Spec
         run: |
-          buildozer init
-          # تعديل المتطلبات وقبول التراخيص وتثبيت إصدار الأدوات المستقر
-          sed -i 's/#requirements = python3,kivy/requirements = python3,kivy,tkinter/g' buildozer.spec
-          sed -i 's/#android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
-          sed -i 's/android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
-          sed -i 's/#android.sdk_build_tools_version =.*/android.sdk_build_tools_version = 33.0.2/g' buildozer.spec
-          sed -i 's/android.sdk_build_tools_version =.*/android.sdk_build_tools_version = 33.0.2/g' buildozer.spec
-          if ! grep -q "android.accept_sdk_license = True" buildozer.spec; then
-            echo "android.accept_sdk_license = True" >> buildozer.spec
-          fi
-          if ! grep -q "android.sdk_build_tools_version" buildozer.spec; then
-            echo "android.sdk_build_tools_version = 33.0.2" >> buildozer.spec
-          fi
+          # كتابة ملف إعدادات نظيف ومضبوط بالكامل يمنع ظهور المشكلة نهائياً
+          cat << 'EOF' > buildozer.spec
+          [app]
+          title = Township Tool
+          package.name = township
+          package.domain = org.township
+          source.include_exts = py,png,jpg,kv,atlas
+          version = 1.0
+          requirements = python3,kivy,tkinter
+          orientation = portrait
+          fullscreen = 0
+          android.api = 33
+          android.minapi = 21
+          android.sdk_build_tools_version = 33.0.2
+          android.accept_sdk_license = True
+          android.archs = arm64-v8a
+          [buildozer]
+          log_level = 2
+          warn_on_root = 1
+          EOF
       - name: Build APK with Buildozer
         run: |
           buildozer -v android debug
