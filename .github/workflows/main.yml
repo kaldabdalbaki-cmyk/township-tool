@@ -20,16 +20,20 @@ jobs:
           sudo apt-get install -y build-essential libssl-dev libffi-dev python3-dev git zip unzip
           pip install --upgrade pip
           pip install buildozer cython
-      - name: Configure Buildozer and Force License
+      - name: Configure Buildozer and Force Stable Tools
         run: |
           buildozer init
-          # تعديل المتطلبات وقبول الترخيص بفرض القيمة صراحةً
+          # تعديل المتطلبات وقبول التراخيص وتثبيت إصدار الأدوات المستقر
           sed -i 's/#requirements = python3,kivy/requirements = python3,kivy,tkinter/g' buildozer.spec
-          sed -i 's/android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
           sed -i 's/#android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
-          # إضافة سطر قبول الترخيص بالقوة إذا لم يكن موجوداً
+          sed -i 's/android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
+          sed -i 's/#android.sdk_build_tools_version =.*/android.sdk_build_tools_version = 33.0.2/g' buildozer.spec
+          sed -i 's/android.sdk_build_tools_version =.*/android.sdk_build_tools_version = 33.0.2/g' buildozer.spec
           if ! grep -q "android.accept_sdk_license = True" buildozer.spec; then
             echo "android.accept_sdk_license = True" >> buildozer.spec
+          fi
+          if ! grep -q "android.sdk_build_tools_version" buildozer.spec; then
+            echo "android.sdk_build_tools_version = 33.0.2" >> buildozer.spec
           fi
       - name: Build APK with Buildozer
         run: |
