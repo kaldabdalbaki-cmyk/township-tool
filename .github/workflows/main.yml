@@ -20,16 +20,18 @@ jobs:
           sudo apt-get install -y build-essential libssl-dev libffi-dev python3-dev git zip unzip
           pip install --upgrade pip
           pip install buildozer cython
-      - name: Build with Buildozer
+      - name: Configure Buildozer Environment
         run: |
-          if [ ! -f buildozer.spec ]; then
-            buildozer init
-          fi
+          buildozer init
           sed -i 's/#requirements = python3,kivy/requirements = python3,kivy,tkinter/g' buildozer.spec
+          sed -i 's/#android.api = 33/android.api = 33/g' buildozer.spec
+          sed -i 's/#android.minapi = 21/android.minapi = 21/g' buildozer.spec
           sed -i 's/#android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
           sed -i 's/android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
+      - name: Build APK with Buildozer
+        run: |
           buildozer -v android debug
-      - name: Upload APK
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: package
