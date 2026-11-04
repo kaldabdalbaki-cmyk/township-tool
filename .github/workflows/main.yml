@@ -44,7 +44,7 @@ jobs:
           EOF
       - name: Build APK with Buildozer
         run: |
-          buildozer -v android debug
+          buildozer --debug -v android debug
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
