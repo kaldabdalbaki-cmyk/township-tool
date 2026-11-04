@@ -22,12 +22,12 @@ jobs:
           pip install buildozer cython
       - name: Create Clean Buildozer Spec
         run: |
-          # كتابة ملف إعدادات نظيف ومضبوط بالكامل يمنع ظهور المشكلة نهائياً
           cat << 'EOF' > buildozer.spec
           [app]
           title = Township Tool
           package.name = township
           package.domain = org.township
+          source.dir = .
           source.include_exts = py,png,jpg,kv,atlas
           version = 1.0
           requirements = python3,kivy,tkinter
